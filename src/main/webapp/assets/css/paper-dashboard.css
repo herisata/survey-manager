@@ -468,7 +468,7 @@ hr {
 }
 .main-panel > .content {
   padding: 30px 15px;
-  min-height: calc(100% - 123px);
+  min-height: calc(100% - 149px);
 }
 .main-panel > .footer {
   border-top: 1px solid rgba(0, 0, 0, 0.1);

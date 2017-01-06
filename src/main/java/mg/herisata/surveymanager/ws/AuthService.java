@@ -23,6 +23,7 @@ import mg.herisata.surveymanager.wsconfig.WsUtil;
 import mg.herisata.surveymanager.wsconfig.model.BadRequestException;
 import mg.herisata.surveymanager.wsconfig.model.JsonRequest;
 import mg.herisata.surveymanager.wsconfig.model.JsonResponse;
+import org.hibernate.Hibernate;
 
 /**
  *
@@ -63,18 +64,24 @@ public class AuthService {
                 .setParameter("password", WsUtil.toSha256(password));//
         try{
             user = (TUser) query.getSingleResult();
+            if(!user.getEnabled()) throw new BadRequestException("User disabled",(Exception)null);
+            Hibernate.initialize(user.getRole());
         }catch(Exception e){
             throw new BadRequestException("Login/password incorrect.", e);
         }
         //If user fetched
         //create token
-        Map tokenPayload=new HashMap();
-        tokenPayload.put("user-id", user.getId());
-        String token=JwtUtil.generateToken("Token of user "+user.getLogin(), tokenPayload);
+        Map jsonObject=new HashMap();
+        jsonObject.put("user-id", user.getId());
+        String token=JwtUtil.generateToken("Token of user "+user.getLogin(), jsonObject);
         response.getPayload().put("token", token);
         
         //Return user info
-        response.getPayload().put("user-info", user);
+        jsonObject=new HashMap();
+        jsonObject.put("login", user.getLogin());
+        jsonObject.put("label", user.getLabel());
+        jsonObject.put("role", user.getRole());
+        response.getPayload().put("user-info", jsonObject);
         
         return response;
     }

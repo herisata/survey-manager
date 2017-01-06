@@ -23,6 +23,9 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import mg.herisata.surveymanager.wsconfig.model.BadRequestException;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.netbeans.rest.application.config.ApplicationConfig;
 
 /**
  *
@@ -97,15 +100,23 @@ public class WsUtil {
         }
         return hashtable;
     }
-    public static void verifyRequest(JsonRequest request, String... fields) throws Exception{
+    public static void verifyRequest(JsonRequest request, String... fields) throws BadRequestException{
         String msg="Incorrect request data";
         ArrayList list=new ArrayList();
-        if(request==null) throw new Exception(msg);
-        if(request.getPayload()==null) throw new Exception(msg+": No 'payload'");
+        if(request==null) throw new BadRequestException(msg,(Exception)null);
+        if(request.getPayload()==null) throw new BadRequestException(msg+": No 'payload'",(Exception)null);
         for(String field:fields){
             if(request.getPayload().get(field)==null) list.add(field);
+            else if(field.equalsIgnoreCase("token")){
+                String token=(String)request.getPayload().get("token");
+                try {
+                    if(ApplicationConfig.validateToken()) JwtUtil.readToken(token);
+                } catch (InvalidJwtException ex) {
+                    throw new BadRequestException("Incorrect token", ex);
+                }
+            }
         }
-        if(!list.isEmpty())throw new Exception(msg+": Field(s) "+list.toString()+" required");
+        if(!list.isEmpty())throw new BadRequestException(msg+": Field(s) "+list.toString()+" required",(Exception)null);
     }
     public static void verifyFieldsNotNull(Object obj, String... fieldNames) throws Exception{
         ArrayList<String> fieldsNotSet=new ArrayList<>();

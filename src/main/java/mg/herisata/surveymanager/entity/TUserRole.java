@@ -5,6 +5,8 @@
  */
 package mg.herisata.surveymanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -34,6 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "t_user_role")
 @XmlRootElement
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NamedQueries({
     @NamedQuery(name = "TUserRole.findAll", query = "SELECT t FROM TUserRole t")
     , @NamedQuery(name = "TUserRole.findById", query = "SELECT t FROM TUserRole t WHERE t.id = :id")
@@ -55,15 +58,15 @@ public class TUserRole implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "allow_survey_crud")
-    private short allowSurveyCrud;
+    private boolean allowSurveyCrud;
     @Basic(optional = false)
     @NotNull
     @Column(name = "allow_question_crud")
-    private short allowQuestionCrud;
+    private boolean allowQuestionCrud;
     @Basic(optional = false)
     @NotNull
     @Column(name = "allow_user_crud")
-    private short allowUserCrud;
+    private boolean allowUserCrud;
     @Basic(optional = false)
     @NotNull
     @Column(name = "CREATED_AT")
@@ -82,7 +85,7 @@ public class TUserRole implements Serializable {
         this.id = id;
     }
 
-    public TUserRole(Integer id, String label, short allowSurveyCrud, short allowQuestionCrud, short allowUserCrud, Date createdAt) {
+    public TUserRole(Integer id, String label, boolean allowSurveyCrud, boolean allowQuestionCrud, boolean allowUserCrud, Date createdAt) {
         this.id = id;
         this.label = label;
         this.allowSurveyCrud = allowSurveyCrud;
@@ -91,6 +94,7 @@ public class TUserRole implements Serializable {
         this.createdAt = createdAt;
     }
 
+    @JsonIgnore
     public Integer getId() {
         return id;
     }
@@ -107,30 +111,31 @@ public class TUserRole implements Serializable {
         this.label = label;
     }
 
-    public short getAllowSurveyCrud() {
+    public boolean getAllowSurveyCrud() {
         return allowSurveyCrud;
     }
 
-    public void setAllowSurveyCrud(short allowSurveyCrud) {
+    public void setAllowSurveyCrud(boolean allowSurveyCrud) {
         this.allowSurveyCrud = allowSurveyCrud;
     }
 
-    public short getAllowQuestionCrud() {
+    public boolean getAllowQuestionCrud() {
         return allowQuestionCrud;
     }
 
-    public void setAllowQuestionCrud(short allowQuestionCrud) {
+    public void setAllowQuestionCrud(boolean allowQuestionCrud) {
         this.allowQuestionCrud = allowQuestionCrud;
     }
 
-    public short getAllowUserCrud() {
+    public boolean getAllowUserCrud() {
         return allowUserCrud;
     }
 
-    public void setAllowUserCrud(short allowUserCrud) {
+    public void setAllowUserCrud(boolean allowUserCrud) {
         this.allowUserCrud = allowUserCrud;
     }
 
+    @JsonIgnore
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -139,6 +144,7 @@ public class TUserRole implements Serializable {
         this.createdAt = createdAt;
     }
 
+    @JsonIgnore
     public Date getModifiedAt() {
         return modifiedAt;
     }
@@ -148,6 +154,7 @@ public class TUserRole implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Set<TUser> getTUserSet() {
         return tUserSet;
     }
@@ -180,5 +187,4 @@ public class TUserRole implements Serializable {
     public String toString() {
         return "mg.herisata.surveymanager.entity.TUserRole[ id=" + id + " ]";
     }
-    
 }

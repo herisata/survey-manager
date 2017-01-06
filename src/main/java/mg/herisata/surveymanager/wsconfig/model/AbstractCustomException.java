@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.netbeans.rest.application.config.ApplicationConfig;
 
 /**
  *
@@ -47,7 +48,7 @@ public abstract class AbstractCustomException extends Exception implements Seria
     }
 
     public final HashMap<String, Object> getPayload() {
-        return payload;
+        return (ApplicationConfig.debug()&&this.payload!=null)?this.payload:new HashMap<String, Object>();
     }
 
     public final void setPayload(HashMap<String, Object> payload) {
@@ -58,8 +59,10 @@ public abstract class AbstractCustomException extends Exception implements Seria
         getPayload().put("exceptions",exeptions);
     }
     public final void addException(Exception exception) {
-        if(getPayload().get("exceptions")==null) getPayload().put("exceptions", new ArrayList<String>());
-        ((List)getPayload().get("exceptions")).add(exception.getMessage());
+        if(getPayload().get("exceptions")==null) {
+            getPayload().put("exceptions", new ArrayList());
+        }
+        if(exception.getMessage()!=null) ((List)getPayload().get("exceptions")).add(exception.getMessage());
     }
     public final void setMessage(String message){
         getStatus().setMessage(message);
@@ -88,4 +91,5 @@ public abstract class AbstractCustomException extends Exception implements Seria
     public String getMessage() {
         return super.getMessage(); //To change body of generated methods, choose Tools | Templates.
     }
+    
 }

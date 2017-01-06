@@ -63,7 +63,7 @@ public class TUser implements Serializable {
     private String password;
     @Basic(optional = false)
     @NotNull
-    private short enabled;
+    private boolean enabled;
     @Basic(optional = false)
     @NotNull
     @Column(name = "CREATED_AT")
@@ -87,13 +87,12 @@ public class TUser implements Serializable {
         this.id = id;
     }
 
-    public TUser(Integer id, String label, String login, String password, short enabled, Date createdAt) {
+    public TUser(Integer id, String label, String login, String password, boolean enabled) {
         this.id = id;
         this.label = label;
         this.login = login;
         this.password = password;
         this.enabled = enabled;
-        this.createdAt = createdAt;
     }
 
     public Integer getId() {
@@ -128,11 +127,11 @@ public class TUser implements Serializable {
         this.password = password;
     }
 
-    public short getEnabled() {
+    public boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(short enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
